@@ -3,6 +3,8 @@
 class Board {
     private $figures = [];
 
+    private $lastColor = false;
+
     public function __construct() {
         $this->figures['a'][1] = new Rook(false);
         $this->figures['b'][1] = new Knight(false);
@@ -42,7 +44,8 @@ class Board {
     }
 
     public function move($move) {
-        if (!preg_match('/^([a-h])(\d)-([a-h])(\d)$/', $move, $match)) {
+
+        if (!preg_match('/^([a-h])([1-8])-([a-h])([1-8])$/', $move, $match)) {
             throw new \Exception("Incorrect move");
         }
 
@@ -52,9 +55,22 @@ class Board {
         $yTo   = $match[4];
 
         if (isset($this->figures[$xFrom][$yFrom])) {
+            if ($this->figures[$xFrom][$yFrom]->getIsBlack() != $this->lastColor)
+            {
+                throw new \Exception("You mustn't move twice!");
+            }
+
+            // проверяем, валиден ли ход фигурой (новый метод Figure moveIsValid)
+            if (!$this->figures[$xFrom][$yFrom]->moveIsValid($xFrom, $yFrom, $xTo, $yTo, $this->figures))
+            {
+                $figure_type = get_class($this->figures[$xFrom][$yFrom]);
+                throw new \Exception("Figure $figure_type can't move this way!");
+            }
             $this->figures[$xTo][$yTo] = $this->figures[$xFrom][$yFrom];
         }
+
         unset($this->figures[$xFrom][$yFrom]);
+        $this->lastColor = !($this->lastColor);
     }
 
     public function dump() {
