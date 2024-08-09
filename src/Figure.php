@@ -18,7 +18,7 @@ class Figure {
     }
 
     /**
-     * Method validates whether the some figure's movements conform to the rules of chess
+     * Method validates whether figure's movements conform to the rules of chess
      *
      * @param string $xFrom - x coordinate of the figure's cell
      * @param int $yFrom - y coordinate of the figure's cell
